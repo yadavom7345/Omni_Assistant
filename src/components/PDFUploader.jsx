@@ -29,6 +29,7 @@ const PDFUploader = ({ onPDFUploaded, setResponse }) => {
       const fileData = await fileResponse.json();
       console.log("File uploaded successfully, ID:", fileData.id);
       
+      // Notify parent component
       onPDFUploaded(file, fileData.id);
       
       return fileData.id;

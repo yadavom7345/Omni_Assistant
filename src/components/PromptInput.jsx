@@ -21,6 +21,7 @@ const PromptInput = ({ setResponse, setLoading, pdfFileId, handleScreenshotReque
     setResponse('');
     
     try {
+      // Check for "screen" keyword
       if (prompt.toLowerCase().includes('screen')) {
         await handleScreenshotRequest(prompt);
         return;

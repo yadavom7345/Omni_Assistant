@@ -7,12 +7,14 @@ const ScreenshotHandler = ({ setResponse, setLoading }) => {
 
   const handleScreenshotRequest = useCallback(async (text) => {
     try {
+      // Take the screenshot
       setResponse("Taking a screenshot... Please select your screen when prompted.");
       const base64Image = await takeScreenshot();
       
       setLoading(true);
       setResponse("Processing your screenshot...");
       
+      // Process the screenshot with OpenAI
       const responseContent = await processScreenshotWithOpenAI(base64Image, text);
       setResponse(responseContent);
     } catch (error) {

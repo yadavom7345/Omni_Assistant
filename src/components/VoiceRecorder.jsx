@@ -5,6 +5,7 @@ const VoiceRecorder = ({ onTranscriptionComplete, setResponse }) => {
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   
+  // Cleanup function
   useEffect(() => {
     return () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
@@ -36,19 +37,24 @@ const VoiceRecorder = ({ onTranscriptionComplete, setResponse }) => {
       };
       
       mediaRecorder.onstop = async () => {
+        // Process the recording only if we have data
         if (chunksRef.current.length > 0) {
           setResponse("Processing your voice recording...");
           
           try {
+            // Create a blob from audio chunks
             const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
             
+            // Check blob size
             console.log(`Audio size: ${audioBlob.size / 1024} KB`);
             
+            // Create a FormData object to send to OpenAI
             const formData = new FormData();
             formData.append('file', audioBlob, 'recording.webm');
             formData.append('model', 'whisper-1');
             formData.append('language', 'en');
             
+            // Send to OpenAI Whisper API
             const transcriptionResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
               method: 'POST',
               headers: {
@@ -65,6 +71,7 @@ const VoiceRecorder = ({ onTranscriptionComplete, setResponse }) => {
             const transcriptionData = await transcriptionResponse.json();
             const transcription = transcriptionData.text.trim();
             
+            // Send transcription to parent component
             if (transcription) {
               onTranscriptionComplete(transcription);
             } else {
@@ -78,6 +85,7 @@ const VoiceRecorder = ({ onTranscriptionComplete, setResponse }) => {
           setResponse("No audio recorded. Please try again.");
         }
         
+        // Stop all tracks to properly release the microphone
         stream.getTracks().forEach(track => track.stop());
       };
       

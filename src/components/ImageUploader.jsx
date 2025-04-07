@@ -32,6 +32,7 @@ const ImageUploader = ({ onImageSelected, setResponse, setLoading }) => {
     setResponse("Processing your image...");
     
     try {
+      // Read the image as base64
       const base64Image = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -39,6 +40,7 @@ const ImageUploader = ({ onImageSelected, setResponse, setLoading }) => {
         reader.readAsDataURL(imageFile);
       });
       
+      // Using the OpenAI API format for images
       const requestBody = {
         model: "gpt-4o",
         messages: [

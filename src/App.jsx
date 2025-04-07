@@ -7,6 +7,7 @@ import ScreenshotHandler from './components/ScreenshotHandler'
 import PromptInput from './components/PromptInput'
 
 function App() {
+  // State
   const [prompt, setPrompt] = useState('')
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
@@ -14,7 +15,9 @@ function App() {
   const [pdfFileId, setPdfFileId] = useState(null)
   const [imageFile, setImageFile] = useState(null)
 
+  // Handle transcription from voice recorder
   const handleTranscriptionComplete = (transcription) => {
+    // Update the prompt with the transcription
     setPrompt(prev => {
       const separator = prev.trim() ? ' ' : '';
       return prev + separator + transcription;
@@ -22,20 +25,24 @@ function App() {
     
     setResponse(`Transcribed: "${transcription}"`);
     
+    // Check for the keyword "screen" to take a screenshot
     if (transcription.toLowerCase().includes('screen')) {
       screenshotHandler.handleScreenshotRequest(transcription);
     }
   };
 
+  // Handle PDF upload
   const handlePDFUploaded = (file, fileId) => {
     setPdfFile(file);
     setPdfFileId(fileId);
   };
 
+  // Handle image selection
   const handleImageSelected = (file) => {
     setImageFile(file);
   };
 
+  // Initialize components
   const pdfUploader = PDFUploader({
     onPDFUploaded: handlePDFUploaded,
     setResponse
@@ -59,6 +66,7 @@ function App() {
     handleScreenshotRequest: screenshotHandler.handleScreenshotRequest
   });
 
+  // Update the external prompt state when our internal one changes
   if (prompt !== promptInput.prompt) {
     setPrompt(promptInput.prompt);
   }
